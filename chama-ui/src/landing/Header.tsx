@@ -7,6 +7,8 @@ export default function Header(){
             <Chama_profile/>            
             <About/>
             <Get_Started/>
+
+            <button><NavLink to="/app" >Admin </NavLink></button>
             
         </div>
     );
