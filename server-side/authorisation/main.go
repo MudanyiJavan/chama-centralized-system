@@ -23,6 +23,7 @@ func main() {
 	fmt.Println(name, bar, error)
 
 	router := gin.Default()
+	router.GET("/albums", getAlbums)
 	router.POST("/albums", postAlbums)
 
 	router.Run("localhost:8080")
@@ -76,6 +77,7 @@ type response_token struct {
 	Token string `json:"token"`
 }
 
+// post request
 func postAlbums(c *gin.Context) {
 	var newAlbum album
 	validtoken, error := encoding_token()
@@ -90,4 +92,21 @@ func postAlbums(c *gin.Context) {
 	// Add the new album to the slice.
 	albums = append(albums, newAlbum)
 	c.IndentedJSON(http.StatusCreated, xx)
+}
+
+type testHeader struct {
+	Rate   int    `header:"Rate"`
+	Domain string `header:"Domain"`
+}
+
+func getAlbums(c *gin.Context) {
+	h := testHeader{}
+	if err := c.ShouldBindHeader(&h); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"Rate": h.Rate, "Domain": h.Domain})
+	name, bar, error := decoding_token(h.Domain)
+	fmt.Println(name, bar, error)
+	c.IndentedJSON(http.StatusOK, albums)
 }
