@@ -1,49 +1,130 @@
 import { NavLink } from 'react-router-dom';
+import { useState } from 'react';
 import logo from '../assets/chama_logo.png'
 
-export default function Header(){
-    return (
-        <div>
-            <Chama_profile/>            
-            <About/>
-            <Get_Started/>
+/* Palette (3 colors only)
+   blue  #1e4f9c  (main)
+   white #ffffff  (main)
+   gold  #c9a227  (rare accent)
+*/
 
-            <button><NavLink to="/app" >Admin </NavLink></button>
-            
-        </div>
+const links = [
+    { label: 'How it works', href: '#how-it-works' },
+    { label: 'Features', href: '#features' },
+    { label: 'For Your Group', href: '#for-your-group' },
+    { label: 'FAQs', href: '#faqs' },
+]
+
+export default function Header() {
+    const [open, setOpen] = useState(false)
+
+    return (
+        <header className="sticky top-0 z-50 border-b border-[#1e4f9c]/15 bg-white text-[#1e4f9c]">
+            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-8">
+                <Chama_profile />
+
+                {/* Desktop nav */}
+                <div className="hidden md:block">
+                    <About />
+                </div>
+
+                {/* Desktop buttons */}
+                <div className="hidden items-center gap-3 md:flex">
+                    <Admin_button />
+                    <Get_Started />
+                </div>
+
+                {/* Mobile menu toggle */}
+                <button
+                    type="button"
+                    onClick={() => setOpen(!open)}
+                    aria-label="Toggle menu"
+                    aria-expanded={open}
+                    className="flex h-10 w-10 items-center justify-center rounded-md border border-[#1e4f9c]/30 md:hidden"
+                >
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        {open
+                            ? <path d="M6 6l12 12M18 6L6 18" />
+                            : <path d="M4 7h16M4 12h16M4 17h16" />}
+                    </svg>
+                </button>
+            </div>
+
+            {/* Mobile panel */}
+            {open && (
+                <div className="border-t border-[#1e4f9c]/15 bg-white px-4 pb-5 pt-3 md:hidden">
+                    <About mobile onNavigate={() => setOpen(false)} />
+                    <div className="mt-4 flex flex-col gap-3">
+                        <Admin_button />
+                        <Get_Started />
+                    </div>
+                </div>
+            )}
+        </header>
     );
 }
 
 
-function Chama_profile(){
-    return(
-        <div>
-            <img src={logo} alt="logo" />
-            <div>
-                <h2>Chama</h2>
-                <p>Centerilized</p>
+function Chama_profile() {
+    return (
+        <NavLink to="/" className="flex items-center gap-3">
+            <img
+                src={logo}
+                alt="Chama logo"
+                className="h-11 w-11 rounded-full object-cover ring-2 ring-[#c9a227]"
+            />
+            <div className="leading-tight">
+                <h2 className="text-xl font-bold">Chama</h2>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#1e4f9c]/70">
+                    Centralized
+                </p>
             </div>
-        </div>
+        </NavLink>
     )
 }
 
-function About(){
-    return(
-        <div>
-            <ul>
-                <li> <a href="http://">How it works</a></li>
-                <li> <a href="http://">Features</a></li>
-                <li> <a href="http://">For Your Group</a></li>
-                <li> <a href="http://">FAQs</a></li>
+function About({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
+    return (
+        <nav>
+            <ul className={mobile ? 'flex flex-col gap-1' : 'flex items-center gap-8'}>
+                {links.map((l) => (
+                    <li key={l.label}>
+                        <a
+                            href={l.href}
+                            onClick={onNavigate}
+                            className={
+                                mobile
+                                    ? 'block rounded-md px-2 py-2 text-sm font-medium hover:bg-[#1e4f9c]/5'
+                                    : 'border-b-2 border-transparent pb-1 text-sm font-medium text-[#1e4f9c]/80 transition hover:border-[#c9a227] hover:text-[#1e4f9c]'
+                            }
+                        >
+                            {l.label}
+                        </a>
+                    </li>
+                ))}
             </ul>
-        </div>
+        </nav>
     )
 }
 
-function Get_Started(){
-    return(
-        <div>           
-            <button><NavLink to="/Signup" >Get Started </NavLink></button>
-        </div>
+function Admin_button() {
+    return (
+        <NavLink
+            to="/admin_screen"
+            className="rounded-full border border-[#1e4f9c] px-5 py-2 text-center text-sm font-medium transition hover:bg-[#1e4f9c] hover:text-white"
+        >
+            Admin
+        </NavLink>
+    )
+}
+
+function Get_Started() {
+    return (
+        <NavLink
+            to="/Signup"
+            className="rounded-full bg-[#1e4f9c] px-5 py-2 text-center text-sm font-medium text-white transition hover:bg-[#173f7d]"
+        >
+            Get Started
+        </NavLink>
     )
 }
