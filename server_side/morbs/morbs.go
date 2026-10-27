@@ -23,7 +23,8 @@ func main() {
 	router.GET("/profile", restful_API.GetAlbums)
 	router.GET("/users", restful_API.Getprofiles)
 	router.GET("/chamas", restful_API.Getchamas)
-	router.POST("/albums", restful_API.PostAlbums)
+	router.POST("/userd", restful_API.PostUsers)
 
 	router.Run("localhost:8080")
+
 }
