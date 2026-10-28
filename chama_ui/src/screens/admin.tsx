@@ -27,7 +27,7 @@ function Header() {
                     C
                 </div>
                 <div className="leading-tight">
-                    <h2 className="text-xl font-bold">Chama</h2>
+                    <h2 className="text-xl font-bold">Morbs</h2>
                     <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#1e4f9c]/70">
                         Centralized
                     </p>

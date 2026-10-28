@@ -100,7 +100,7 @@ func Chama_profiles(user_id string) ([]Chama_Profile, error) {
 }
 
 // querying a single profile function
-func Single_query() (string, int64, string, error) {
+func Login_Authentication(password string) (string, error) {
 	// 1. Load the .env file from the current directory
 	err := godotenv.Load()
 	if err != nil {
@@ -115,18 +115,14 @@ func Single_query() (string, int64, string, error) {
 		os.Exit(1)
 	}
 	defer conn.Close(context.Background())
-
-	var name string
-	var contact int64
-	var email string
-	idToFind := "av12oc18we"
-	err = conn.QueryRow(context.Background(), "select name, contact, email from profile_table where id=$1", idToFind).Scan(&name, &contact, &email)
+	var id string
+	err = conn.QueryRow(context.Background(), "select id  from profiles where password=$1", password).Scan(&id)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		os.Exit(1)
+		return "", err
 	}
 
-	return name, contact, email, nil
+	return id, nil
 
 }
 

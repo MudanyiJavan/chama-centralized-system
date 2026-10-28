@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { supabase } from '../supabaseClient.tsx'
+//import { supabase } from '../supabaseClient.tsx'
 import { StatusBanner, SubmitButton, idle } from './feedback.tsx';
 import type { Status } from './feedback.tsx';
 
@@ -55,7 +55,7 @@ export default function Sign_up() {
     const [fname, setFname] = useState('')
     const [sname, setSname] = useState('')
     const [contact, setContact] = useState('')
-    const [role, setRole] = useState('')
+    const [email, setRole] = useState('')
     const [password, setPassword] = useState('')
     const [confirm, setConfirm] = useState('')
     const [status, setStatus] = useState<Status>(idle)
@@ -74,7 +74,7 @@ export default function Sign_up() {
     }
 
     async function createAccount() {
-        if (!fname.trim() || !sname.trim() || !contact.trim() || !role.trim() || !password) {
+        if (!fname.trim() || !sname.trim() || !contact.trim() || !email.trim() || !password) {
             setStatus({ type: 'error', message: 'Please fill in all the fields.' })
             return
         }
@@ -90,18 +90,46 @@ export default function Sign_up() {
         setStatus({ type: 'loading' })
 
         try {
+            const url ='http://localhost:8080/userd'
+            const post_response = await fetch(url, 
+                {
+                    method:'post',
+                    headers:{
+                        "Content-type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        fname: fname,
+                        sname: sname,
+                        contact: Number(contact),
+                        email: email,
+                        password: password
+                    }),
+    
+                }
+            )
+            if (!post_response.ok) {
+                const errorText = await post_response.text();
+                console.error("Server error:", errorText);
+                return;
+            }
+
+            const result = await post_response.json()
+
+            console.log(result)
+            {/*
             const { error } = await supabase
                 .from('profiles')
-                .insert([{ name: `${fname.trim()} ${sname.trim()}`, role: role.trim(), contact: contact.trim(), password }])
-
+                .insert([{ name: `${fname.trim()} ${sname.trim()}`, role: email.trim(), contact: contact.trim(), password }])
+            
             if (error) {
                 console.error('Signup Error:', error.message)
                 setStatus({ type: 'error', message: error.message })
                 return
             }
+             */}   
 
             setStatus({ type: 'success', message: 'Account created! Taking you to your dashboard...' })
-            timer.current = window.setTimeout(() => navigate('/admin_screen'), 1500)
+            timer.current = window.setTimeout(() => navigate('/chamaAuth'), 1500)
         } catch {
             setStatus({ type: 'error', message: 'Network problem. Check your connection and try again.' })
         }
@@ -124,7 +152,7 @@ export default function Sign_up() {
                     <Field icon={<UserIcon className="h-4 w-4" />} value={fname} onChange={edit(setFname)} placeholder="First name" />
                     <Field icon={<UserIcon className="h-4 w-4" />} value={sname} onChange={edit(setSname)} placeholder="Second name" />
                     <Field icon={<PhoneIcon className="h-4 w-4" />} value={contact} onChange={edit(setContact)} placeholder="Mobile contact" />
-                    <Field icon={<BadgeIcon className="h-4 w-4" />} value={role} onChange={edit(setRole)} placeholder="Your role" />
+                    <Field icon={<BadgeIcon className="h-4 w-4" />} value={email} onChange={edit(setRole)} placeholder="Your email address" />
                     <Field icon={<LockIcon className="h-4 w-4" />} type="password" value={password} onChange={edit(setPassword)} placeholder="Password" />
                     <Field icon={<LockIcon className="h-4 w-4" />} type="password" value={confirm} onChange={edit(setConfirm)} placeholder="Confirm password" />
 

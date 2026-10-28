@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../supabaseClient.tsx'
-import { friendlyAuthError, idle } from './feedback.tsx'
+//import { supabase } from '../supabaseClient.tsx'
+import { idle } from './feedback.tsx'
 import type { Status } from './feedback.tsx'
 
 export function useLogin() {
@@ -42,15 +42,28 @@ export function useLogin() {
         setStatus({ type: 'loading' })
 
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: contact.trim(),
-                password,
-            })
-
-            if (error || !data.user) {
-                setStatus({ type: 'error', message: friendlyAuthError(error?.message) })
-                return
+            const url = "http://localhost:8080/login"
+            const response = await fetch(url,
+                {
+                    method:"POST",
+                    headers:{
+                        "Content-type": "application/json",
+                    },   
+                    body : JSON.stringify({
+                        contact: Number(contact),
+                        password: password
+                    }),
+                    credentials: 'include',           
+                }
+            )
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Server error:", errorText);
+                return;
             }
+
+            const results = await response.json()
+            console.log(results)
 
             setStatus({ type: 'success', message: 'Welcome back! Taking you to your dashboard...' })
             timer.current = window.setTimeout(() => navigate('/chamaAuth'), 1200)

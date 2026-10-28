@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"errors"
+	"fmt"
 	"time"
 
 	"example.com/morbs/data_access"
@@ -62,7 +63,7 @@ func token_generation(id string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":   id,
 		"name": "Morbs",
-		"nbf":  time.Now(),
+		"nbf":  time.Now().Add(-10 * time.Second).Unix(),
 	})
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString(hmacSampleSecret)
@@ -86,4 +87,40 @@ func token_validation(token string) (string, error) {
 	}
 
 	return "", errors.New("invalid token structure")
+}
+
+func User_login(c *gin.Context) {
+	var login_details user_credentials
+	if err := c.BindJSON(&login_details); err != nil {
+		return
+	}
+	data := login_details
+	Pass := data.Password
+
+	id, err := data_access.Login_Authentication(Pass)
+	if err != nil {
+		c.IndentedJSON(http.StatusCreated, err)
+		return
+	}
+
+	client_token, err := token_generation(id)
+	if err != nil {
+		c.IndentedJSON(http.StatusCreated, err)
+	}
+	fmt.Println(client_token)
+	c.SetCookie(
+		"session_token", // Cookie name
+		client_token,    // Cookie value
+		3600*24,         // MaxAge in seconds (e.g., 24 hours)
+		"/",             // Path (available to the entire site)
+		"localhost",     // Domain (blank defaults to the current host)
+		false,           // Secure (set to true for HTTPS in production)
+		true,            // HttpOnly (blocks client-side JavaScript access)
+	)
+	c.IndentedJSON(http.StatusCreated, gin.H{"message": "logged in successfully"})
+}
+
+type user_credentials struct {
+	Contact  int64  `json:"contact"`
+	Password string `json:"password"`
 }

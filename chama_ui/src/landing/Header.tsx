@@ -30,7 +30,7 @@ export default function Header() {
 
                 {/* Desktop buttons */}
                 <div className="hidden items-center gap-3 md:flex">
-                    <Admin_button />
+                    
                     <Get_Started />
                 </div>
 
@@ -55,7 +55,7 @@ export default function Header() {
                 <div className="border-t border-[#1e4f9c]/15 bg-white px-4 pb-5 pt-3 md:hidden">
                     <About mobile onNavigate={() => setOpen(false)} />
                     <div className="mt-4 flex flex-col gap-3">
-                        <Admin_button />
+                        
                         <Get_Started />
                     </div>
                 </div>
@@ -107,16 +107,7 @@ function About({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: 
     )
 }
 
-function Admin_button() {
-    return (
-        <NavLink
-            to="/admin_screen"
-            className="rounded-full border border-[#1e4f9c] px-5 py-2 text-center text-sm font-medium transition hover:bg-[#1e4f9c] hover:text-white"
-        >
-            Admin
-        </NavLink>
-    )
-}
+
 
 function Get_Started() {
     return (

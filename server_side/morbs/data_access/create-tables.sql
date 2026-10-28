@@ -14,3 +14,5 @@ VALUES
   ('Giant Steps', 'John Coltrane', 63.99),
   ('Jeru', 'Gerry Mulligan', 17.99),
   ('Sarah Vaughan', 'Sarah Vaughan', 34.98);
+
+  //source C:/Users/Administrator/Desktop/chama/server-side/data-access/create-tables.sql;

@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png'
 import policy_logo from '../assets/policy_logo.png'
 import { useState, useEffect} from 'react'
 export default function Chama_Auth(){
+    const navigate = useNavigate();
+
     interface Profile {
         name: string;
         admin: string;
@@ -11,7 +14,13 @@ export default function Chama_Auth(){
         const url = "http://localhost:8080/chamas"
         const fetchchamas= async()=>{
             try {
-                const response= await fetch(url)
+                const response= await fetch(url, {
+                    method:"GET", 
+                    credentials:'include',
+                    headers:{
+                        'Content-Type': 'application/json',
+                    },
+                });
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch data");
@@ -74,12 +83,26 @@ export default function Chama_Auth(){
                    
                     {fetched_data.map((data, index)=>(
                         <div key={index} className="rounded-xl border border-[#d5dbe6] bg-white px-5 py-4 transition hover:border-[#1a56db]">
+                           
                             <p className="text-base text-[#14213d]"><strong>Name:</strong> {data.name}</p>
                             <p className="text-sm text-[#6b7a90]"><strong>Admin:</strong> {data.admin}</p>
-                               
+                            {
+                                data.admin=="admin"?
+                                <button className="rounded-lg border border-[#d5dbe6] px-5 py-2.5 text-sm font-semibold text-[#1a56db] 
+                                    transition hover:bg-[#eef3fd] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a56db] focus-visible:ring-offset-2" 
+                                    
+                                    onClick={()=>navigate('/admin_screen')}
+                                >
+                                    Visit
+                                </button>
+                                :
+                                <button className="rounded-lg border border-[#d5dbe6] px-5 py-2.5 text-sm font-semibold text-[#1a56db] 
+                                    transition hover:bg-[#eef3fd] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a56db] focus-visible:ring-offset-2" 
+                                    
+                                    onClick={()=>navigate('/chamaAuth')}>Visit</button> 
+                            }                           
                         </div>
-                    ))}                      
-                    
+                    ))}                     
                 </div>
 
                 <div className="w-full max-w-[680px] rounded-xl bg-[#eef3fd] p-6">
@@ -90,7 +113,10 @@ export default function Chama_Auth(){
                 </div>
 
                 <div className="mt-auto">
-                    <button className="rounded-lg border border-[#d5dbe6] px-5 py-2.5 text-sm font-semibold text-[#1a56db] transition hover:bg-[#eef3fd] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a56db] focus-visible:ring-offset-2">
+                    <button className="rounded-lg border border-[#d5dbe6] px-5 py-2.5 text-sm font-semibold text-[#1a56db] 
+                        transition hover:bg-[#eef3fd] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a56db] focus-visible:ring-offset-2" 
+                        onClick={()=>navigate('/Login')}
+                    >
                         logout
                     </button>
                 </div>
